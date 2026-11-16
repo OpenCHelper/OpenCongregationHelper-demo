@@ -7,6 +7,9 @@ name: Deploy the demo
 # - manually, to deploy the latest release again.
 #
 # The deployed releases are recorded as `deployed/<tag>` tags of this repository.
+#
+# Altervista has no cron: after every deployment, the cron-job.org job of the `(Demo)` folder (created or updated)
+# calls the scheduler of the demo, with the ARTISAN_CRON_TOKEN secret of the DEMO environment.
 on:
   schedule:
     - cron: "41 */6 * * *" # New releases
@@ -23,6 +26,11 @@ concurrency:
 
 env:
   UPSTREAM_REPOSITORY: OpenCHelper/OpenCongregationHelper
+  DEMO_URL: https://ochdemo.altervista.org
+  # Like the PR previews of OpenCongregationHelper, whose scheduled tasks are all due in this window
+  cron_folder: (Demo)
+  cron_schedule: "*/5 8-22 * * 1-5"
+  cron_timezone: Europe/Rome
 
 jobs:
   check:
@@ -101,6 +109,7 @@ jobs:
         MAIL_MAILER='log'
         INITIAL_ROOT_USERNAME='Demo User'
         INITIAL_ROOT_USERMAIL='demo@example.com'
+        # ARTISAN_CRON_TOKEN: from the secret of the DEMO environment, also sent by the cron job
         DEMO_PREFILL_LOGIN_CREDENTIALS=true
     secrets: inherit
 
@@ -123,3 +132,39 @@ jobs:
             gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/deployed/$TAG" -f "sha=$GITHUB_SHA" > /dev/null
             echo "::notice::Recorded deployed/$TAG"
           fi
+
+  cron:
+    name: Set up the scheduler cron job
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment: DEMO
+
+    steps:
+      - name: Check the secrets
+        env:
+          CRON_JOB_ORG_API_KEY: ${{ secrets.CRON_JOB_ORG_API_KEY }}
+          ARTISAN_CRON_TOKEN: ${{ secrets.ARTISAN_CRON_TOKEN }}
+        run: |
+          for name in CRON_JOB_ORG_API_KEY ARTISAN_CRON_TOKEN; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Set the ${name} secret of the DEMO environment (see the README)."
+              exit 1
+            fi
+          done
+
+      # The job of the folder is matched by title, so that every deployment updates it instead of creating it again.
+      # The queue runs synchronously (`QUEUE_CONNECTION=sync`): only the scheduler needs a cron job
+      - name: Create or update the cron job
+        uses: LukeSavefrogs/cron-job-org-action@v2
+        with:
+          api-key: ${{ secrets.CRON_JOB_ORG_API_KEY }}
+          folder: ${{ env.cron_folder }}
+          base-url: ${{ env.DEMO_URL }}
+          timezone: ${{ env.cron_timezone }}
+          schedule: ${{ env.cron_schedule }}
+          method: POST
+          headers: |
+            X-Cron-Token: ${{ secrets.ARTISAN_CRON_TOKEN }}
+          jobs: |
+            - title: Schedule run
+              url: /api/artisan/schedule/process

@@ -21,6 +21,10 @@ OpenCongregationHelper itself, resetting the database with fresh dummy data:
 
 Each deployed release is recorded as a `deployed/<tag>` tag of this repository.
 
+Since Altervista has no cron, [cron-job.org](https://cron-job.org) calls the scheduler of the demo
+(`/api/artisan/schedule/process`) every 5 minutes, from 8:00 to 22:55 (Rome time), Monday to Friday, like the PR
+previews of OpenCongregationHelper: every deployment creates or updates its job, in the `(Demo)` folder.
+
 ## Setup
 
 The demo is hosted on the `ochdemo` [Altervista](https://www.altervista.org) space, at
@@ -38,6 +42,8 @@ in OpenCongregationHelper).
    | Variable | `FTP_USERNAME` | FTP user of the space |
    | Secret | `FTP_PASSWORD` | FTP password of the space |
    | Secret | `ROOT_PASSWORD` | Password of the administrator of the demo |
+   | Secret | `ARTISAN_CRON_TOKEN` | Random token sent by the cron job to the scheduler, e.g. from `openssl rand -hex 32` |
+   | Secret | `CRON_JOB_ORG_API_KEY` | API key of [cron-job.org](https://cron-job.org) (Settings → API) |
 
    The password of the administrator is shown to every visitor on the login page: never use it anywhere else.
 

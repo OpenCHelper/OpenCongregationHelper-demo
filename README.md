@@ -48,13 +48,19 @@ in OpenCongregationHelper).
 
 3. Create the `demo/.env` file of the space from the
    [`.env.example`](https://github.com/OpenCHelper/OpenCongregationHelper/blob/main/.env.example) of
-   OpenCongregationHelper, with the database of the space, and set:
+   OpenCongregationHelper, and set (the MySQL database of the space must be enabled in the Altervista control panel:
+   it is `my_ochdemo`, with user `ochdemo` and no password):
 
    ```dotenv
    APP_NAME="OpenCongregationHelper (demo)"
    APP_ENV=demo
    APP_DEBUG=false
    APP_URL=https://ochdemo.altervista.org
+   DB_CONNECTION=mysql
+   DB_HOST=localhost
+   DB_DATABASE=my_ochdemo
+   DB_USERNAME=ochdemo
+   DB_PASSWORD=
    INITIAL_ROOT_PASSWORD="a-password-used-nowhere-else"
    DEMO_PREFILL_LOGIN_CREDENTIALS=true
    ```

@@ -23,7 +23,8 @@ Each deployed release is recorded as a `deployed/<tag>` tag of this repository.
 
 Since Altervista has no cron, [cron-job.org](https://cron-job.org) calls the scheduler of the demo
 (`/api/artisan/schedule/process`) every 5 minutes, from 8:00 to 22:55 (Rome time), Monday to Friday, like the PR
-previews of OpenCongregationHelper: every deployment creates or updates its job, in the `(Demo)` folder.
+previews of OpenCongregationHelper: every deployment creates or updates its job, in the `(Demo)` folder, with a new
+token.
 
 ## Setup
 
@@ -42,7 +43,6 @@ in OpenCongregationHelper).
    | Variable | `FTP_USERNAME` | FTP user of the space |
    | Secret | `FTP_PASSWORD` | FTP password of the space |
    | Secret | `ROOT_PASSWORD` | Password of the administrator of the demo |
-   | Secret | `ARTISAN_CRON_TOKEN` | Random token sent by the cron job to the scheduler, e.g. from `openssl rand -hex 32` |
    | Secret | `CRON_JOB_ORG_API_KEY` | API key of [cron-job.org](https://cron-job.org) (Settings → API) |
 
    The password of the administrator is shown to every visitor on the login page: never use it anywhere else.
@@ -61,5 +61,5 @@ in OpenCongregationHelper).
 4. Run the workflow manually once (Actions → Deploy the demo → Run workflow).
 
 The `.env` file of the demo is not managed on the server: every deployment writes it from the `dotenv` settings of
-[`deploy-demo.yml`](.github/workflows/deploy-demo.yml), with a new `APP_KEY` and the `ROOT_PASSWORD` secret. Its
-`APP_ENV` is `demo`: never `production`, where the pre-filled login is always disabled.
+[`deploy-demo.yml`](.github/workflows/deploy-demo.yml), with a new `APP_KEY` and `ARTISAN_CRON_TOKEN` and the
+`ROOT_PASSWORD` secret. Its `APP_ENV` is `demo`: never `production`, where the pre-filled login is always disabled.

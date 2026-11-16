@@ -37,6 +37,9 @@ in OpenCongregationHelper).
    | Variable | `FTP_SERVER` | FTP server of the space (`ftp.ochdemo.altervista.org`) |
    | Variable | `FTP_USERNAME` | FTP user of the space |
    | Secret | `FTP_PASSWORD` | FTP password of the space |
+   | Secret | `ROOT_PASSWORD` | Password of the administrator of the demo |
+
+   The password of the administrator is shown to every visitor on the login page: never use it anywhere else.
 
    Altervista accepts FTP logins only from the countries allowed in its control panel: allow the countries of the
    GitHub-hosted runners (mostly the United States), or the deployment fails with
@@ -46,28 +49,11 @@ in OpenCongregationHelper).
    `SPACE_PHP_HANDLER` (the PHP version of the space, e.g. `av-php82`) repository variables (Settings → Secrets and
    variables → Actions → Variables).
 
-3. Create the `demo/.env` file of the space from the
-   [`.env.example`](https://github.com/OpenCHelper/OpenCongregationHelper/blob/main/.env.example) of
-   OpenCongregationHelper, and set (the MySQL database of the space must be enabled in the Altervista control panel:
-   it is `my_ochdemo`, with user `ochdemo` and no password):
-
-   ```dotenv
-   APP_NAME="OpenCongregationHelper (demo)"
-   APP_ENV=demo
-   APP_DEBUG=false
-   APP_URL=https://ochdemo.altervista.org
-   APP_KEY=base64:...                 # a new key: php -r 'echo "base64:".base64_encode(random_bytes(32));'
-   DB_CONNECTION=mysql
-   DB_HOST=localhost
-   DB_DATABASE=my_ochdemo
-   DB_USERNAME=ochdemo
-   DB_PASSWORD=
-   INITIAL_ROOT_PASSWORD="a-password-used-nowhere-else"
-   DEMO_PREFILL_LOGIN_CREDENTIALS=true
-   ```
-
-   `APP_ENV` must not be `production`, where the pre-filled login is always disabled (outside production, the
-   credentials of the administrator cannot be changed from the application either). The password of
-   `INITIAL_ROOT_PASSWORD` is shown to every visitor: never use it anywhere else.
+3. Enable the MySQL database of the space in the Altervista control panel (`my_ochdemo`, with user `ochdemo` and no
+   password).
 
 4. Run the workflow manually once (Actions → Deploy the demo → Run workflow).
+
+The `.env` file of the demo is not managed on the server: every deployment writes it from the `dotenv` settings of
+[`deploy-demo.yml`](.github/workflows/deploy-demo.yml), with a new `APP_KEY` and the `ROOT_PASSWORD` secret. Its
+`APP_ENV` is `demo`: never `production`, where the pre-filled login is always disabled.

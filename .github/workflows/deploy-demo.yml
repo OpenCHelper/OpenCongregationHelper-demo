@@ -74,6 +74,34 @@ jobs:
       install-dev-dependencies: false
       # Uploaded as a single archive into the `demo/` folder of the space (see the README)
       environment-folder: demo
+      # The `.env` file of the demo, written on every deployment with a new `APP_KEY`, plus the `ROOT_PASSWORD`
+      # secret of the DEMO environment as `INITIAL_ROOT_PASSWORD` (the database of the space has no password)
+      dotenv: |
+        APP_NAME='OpenCongregationHelper'
+        APP_ENV='demo'
+        APP_DEBUG=false
+        APP_URL='https://ochdemo.altervista.org'
+        ASSET_URL='https://ochdemo.altervista.org'
+        APP_VERSION_BRANCH_FILE='.git-branch-name'
+        APP_VERSION_COMMIT_FILE='.git-commit-hash'
+        APP_LOCALE='it'
+        APP_FALLBACK_LOCALE='en'
+        LOG_CHANNEL='single'
+        LOG_LEVEL='warning'
+        DB_CONNECTION='mysql'
+        DB_HOST='localhost'
+        DB_PORT=3306
+        DB_DATABASE='my_ochdemo'
+        DB_USERNAME='ochdemo'
+        DB_PASSWORD=''
+        DB_ENGINE='InnoDB'
+        SESSION_DRIVER='database'
+        CACHE_STORE='database'
+        QUEUE_CONNECTION='sync'
+        MAIL_MAILER='log'
+        INITIAL_ROOT_USERNAME='Demo User'
+        INITIAL_ROOT_USERMAIL='demo@example.com'
+        DEMO_PREFILL_LOGIN_CREDENTIALS=true
     secrets: inherit
 
   record:

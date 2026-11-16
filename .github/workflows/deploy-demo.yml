@@ -101,6 +101,8 @@ jobs:
         DB_USERNAME='ochdemo'
         DB_PASSWORD=''
         DB_ENGINE='InnoDB'
+        # The database may also hold the tables of the PR previews of OpenCongregationHelper (`p<N>_`)
+        DB_PREFIX='demo_'
         SESSION_DRIVER='database'
         CACHE_STORE='database'
         QUEUE_CONNECTION='sync'

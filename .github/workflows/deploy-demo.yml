@@ -72,6 +72,8 @@ jobs:
       seed-dummy-data: true
       setup-root-user: true
       install-dev-dependencies: false
+      # Uploaded as a single archive into the `demo/` folder of the space (see the README)
+      environment-folder: demo
     secrets: inherit
 
   record:

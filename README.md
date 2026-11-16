@@ -38,6 +38,10 @@ in OpenCongregationHelper).
    | Variable | `FTP_USERNAME` | FTP user of the space |
    | Secret | `FTP_PASSWORD` | FTP password of the space |
 
+   Altervista accepts FTP logins only from the countries allowed in its control panel: allow the countries of the
+   GitHub-hosted runners (mostly the United States), or the deployment fails with
+   `530 Autenticazione fallita [...] aggiungi la nazione da cui ti stai connettendo tra quelle consentite`.
+
 2. Create the `SPACE_DEFAULT_ENVIRONMENT` (`demo`, the folder served at <https://ochdemo.altervista.org>) and
    `SPACE_PHP_HANDLER` (the PHP version of the space, e.g. `av-php82`) repository variables (Settings → Secrets and
    variables → Actions → Variables).

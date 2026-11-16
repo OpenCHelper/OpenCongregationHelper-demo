@@ -48,7 +48,7 @@ in OpenCongregationHelper).
 
    ```dotenv
    APP_NAME="OpenCongregationHelper (demo)"
-   APP_ENV=preview
+   APP_ENV=demo
    APP_DEBUG=false
    APP_URL=https://ochdemo.altervista.org
    INITIAL_ROOT_PASSWORD="a-password-used-nowhere-else"

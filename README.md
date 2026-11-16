@@ -56,6 +56,7 @@ in OpenCongregationHelper).
    APP_ENV=demo
    APP_DEBUG=false
    APP_URL=https://ochdemo.altervista.org
+   APP_KEY=base64:...                 # a new key: php -r 'echo "base64:".base64_encode(random_bytes(32));'
    DB_CONNECTION=mysql
    DB_HOST=localhost
    DB_DATABASE=my_ochdemo

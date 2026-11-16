@@ -1,0 +1,95 @@
+name: Deploy the demo
+
+# Deploys the latest release of OpenCongregationHelper (pre-releases included) to the demo
+# site, with fresh dummy data:
+# - every 6 hours, when a new release has been published since the last deployment;
+# - every night, to reset the data changed by the visitors;
+# - manually, to deploy the latest release again.
+#
+# The deployed releases are recorded as `deployed/<tag>` tags of this repository.
+on:
+  schedule:
+    - cron: "41 */6 * * *" # New releases
+    - cron: "23 2 * * *" # Nightly reset
+  workflow_dispatch: # Manually trigger a workflow run
+
+permissions:
+  contents: read
+
+# One deployment at a time
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_REPOSITORY: OpenCHelper/OpenCongregationHelper
+
+jobs:
+  check:
+    name: Find the release to deploy
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      deploy: ${{ steps.release.outputs.deploy }}
+
+    steps:
+      - name: Find the latest release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NIGHTLY_RESET: ${{ github.event.schedule == '23 2 * * *' }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          # Releases are listed newest first: the first one that is not a draft
+          tag=$(gh api "repos/$UPSTREAM_REPOSITORY/releases" --jq '[.[] | select(.draft | not)][0].tag_name // empty')
+          if [ -z "$tag" ]; then
+            echo "::error::No release of $UPSTREAM_REPOSITORY found"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || [ "$NIGHTLY_RESET" = "true" ]; then
+            deploy=true
+          elif gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/deployed/$tag" > /dev/null 2>&1; then
+            deploy=false
+          else
+            deploy=true
+          fi
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
+          echo "::notice::Latest release: $tag, deploying: $deploy"
+
+  deploy:
+    name: Deploy
+    needs: check
+    if: needs.check.outputs.deploy == 'true'
+    uses: OpenCHelper/OpenCongregationHelper/.github/workflows/upload-altervista-reusable.yml@main
+    with:
+      repository: OpenCHelper/OpenCongregationHelper
+      ref: ${{ needs.check.outputs.tag }}
+      environment: DEMO
+      label: DEMO
+      reset-database: true
+      seed-dummy-data: true
+      setup-root-user: true
+      install-dev-dependencies: false
+    secrets: inherit
+
+  record:
+    name: Record the deployed release
+    needs: [check, deploy]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Tag this repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.check.outputs.tag }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/deployed/$TAG" > /dev/null 2>&1; then
+            echo "deployed/$TAG already recorded"
+          else
+            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/deployed/$TAG" -f "sha=$GITHUB_SHA" > /dev/null
+            echo "::notice::Recorded deployed/$TAG"
+          fi

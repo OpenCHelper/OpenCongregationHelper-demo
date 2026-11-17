@@ -77,6 +77,8 @@ jobs:
       install-dev-dependencies: false
       # Uploaded as a single archive into the `demo/` folder of the space (see the README)
       environment-folder: demo
+      # The space also hosts the PR previews of OpenCongregationHelper: keep them in its router
+      router-previews: true
       # Scheduler cron job on cron-job.org, with the CRON_JOB_ORG_API_KEY secret of the DEMO environment: every 5
       # minutes from 8:00 to 22:55 (Rome time) on weekdays, like the PR previews, whose scheduled tasks are all due then
       cron-folder: (Demo)

@@ -30,10 +30,10 @@ token.
 
 The demo is hosted on the `ochdemo` [Altervista](https://www.altervista.org) space, at
 <https://ochdemo.altervista.org>, in its `demo/` folder: the release is uploaded as a single archive and unpacked on the
-server, and the `.htaccess` of the root of the space routes the requests to it (see
-[Hosting the previews on the TEST space](https://github.com/OpenCHelper/OpenCongregationHelper#hosting-the-previews-on-the-test-space)
-and [Deploying with `ftp-archive-deploy`](https://github.com/OpenCHelper/OpenCongregationHelper#deploying-with-ftp-archive-deploy)
-in OpenCongregationHelper).
+server, and the `.htaccess` of the root of the space routes the requests to it, and to the PR previews of
+OpenCongregationHelper (see its
+[`ftp-archive-deploy`](https://github.com/OpenCHelper/OpenCongregationHelper/blob/main/.github/actions/ftp-archive-deploy/action.yml)
+action).
 
 1. Create a `DEMO` environment (Settings → Environments) with:
 

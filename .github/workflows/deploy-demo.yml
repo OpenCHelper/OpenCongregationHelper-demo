@@ -90,12 +90,15 @@ jobs:
         APP_DEBUG=false
         APP_URL='https://ochdemo.altervista.org'
         ASSET_URL='https://ochdemo.altervista.org'
+        APP_LOCALE='en'
+        APP_FALLBACK_LOCALE='en'
+        
         APP_VERSION_BRANCH_FILE='.git-branch-name'
         APP_VERSION_COMMIT_FILE='.git-commit-hash'
-        APP_LOCALE='it'
-        APP_FALLBACK_LOCALE='en'
+        
         LOG_CHANNEL='single'
         LOG_LEVEL='warning'
+        
         DB_CONNECTION='mysql'
         DB_HOST='localhost'
         DB_PORT=3306
@@ -103,12 +106,16 @@ jobs:
         DB_USERNAME='ochdemo'
         DB_PASSWORD=''
         DB_ENGINE='InnoDB'
-        # The database may also hold the tables of the PR previews of OpenCongregationHelper (`p<N>_`)
         DB_PREFIX='demo_'
+        
         SESSION_DRIVER='database'
         CACHE_STORE='database'
         QUEUE_CONNECTION='sync'
+        
         MAIL_MAILER='log'
+        MAIL_FROM_ADDRESS='ochdemo@altervista.org'
+        MAIL_FROM_NAME='OpenCongregationHelper (Demo)'
+
         INITIAL_ROOT_USERNAME='Demo User'
         INITIAL_ROOT_USERMAIL='demo@example.com'
         DEMO_PREFILL_LOGIN_CREDENTIALS=true
